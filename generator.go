@@ -9,7 +9,7 @@ type generator struct {
 
 	template string
 	args     []string
-	flags    []flagSet
+	flagSet  []Flag
 }
 
 func (g *generator) run(args []string, outStream, errStream io.Writer) error {

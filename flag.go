@@ -1,6 +1,6 @@
 package flagen
 
-type flagSet struct {
+type Flag struct {
 	Name  string
 	Value value
 }
