@@ -2,11 +2,11 @@ package flagen
 
 import "os"
 
-func ExampleGenerator_Run_Go() {
-	gen := &generator{template: "go"}
+func ExampleTemplate_Execute_Go() {
+	tmpl, _ := NewTemplate("go")
 
 	args := []string{"-i", "1", "-f", "1.1", "-s", "abc", "-b1", "-b2=true", "arg1", "arg2"}
-	gen.run(args, os.Stdout, os.Stderr)
+	tmpl.Execute(os.Stdout, args)
 
 	// Output:
 	// var (

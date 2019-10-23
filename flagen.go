@@ -18,6 +18,9 @@ func Run(args []string, outStream, errStream io.Writer) error {
 		return errors.New("template is required")
 	}
 
-	gen := &generator{template: args[0]}
-	return gen.run(args[1:], outStream, errStream)
+	tmpl, err := NewTemplate(args[0])
+	if err != nil {
+		return err
+	}
+	return tmpl.Execute(outStream, args[1:])
 }

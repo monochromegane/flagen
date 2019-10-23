@@ -2,47 +2,32 @@ package flagen
 
 import (
 	"fmt"
+	"io"
 	"text/template"
-
-	"github.com/iancoleman/strcase"
 )
 
-var TemplateFuncMap template.FuncMap = template.FuncMap{
-	"ToSnake":              strcase.ToSnake,
-	"ToScreamingSnake":     strcase.ToScreamingSnake,
-	"ToKebab":              strcase.ToKebab,
-	"ToScreamingKebab":     strcase.ToScreamingKebab,
-	"ToDelimited":          strcase.ToDelimited,
-	"ToScreamingDelimited": strcase.ToScreamingDelimited,
-	"ToCamel":              strcase.ToCamel,
-	"ToLowerCamel":         strcase.ToLowerCamel,
+func NewTemplate(path string) (*Template, error) {
+	tmpl, err := templateFrom(path)
+	if err != nil {
+		return nil, err
+	}
+	return &Template{tmpl: tmpl}, nil
 }
 
-type templateTextFunc func() string
-
-var templateMap map[string]templateTextFunc = map[string]templateTextFunc{
-	"go": templateTextGo,
+type Template struct {
+	tmpl *template.Template
 }
 
-func templateTextGo() string {
-	return `var (
-{{ range $flag := .Flags }}	{{ ToLowerCamel $flag.Name }}	{{ if eq "float" $flag.Value.Type -}}
-	float64
-{{ else -}}
-	{{$flag.Value.Type}}
-{{ end -}}
-{{ end }})
+func (t *Template) Execute(outStream io.Writer, args []string) error {
+	fs := &flagSet{}
+	if err := fs.parse(args); err != nil {
+		return err
+	}
 
-func init() {
-{{ range $flag := .Flags }}	{{ $type := $flag.Value.Type -}}
-{{ if eq "float" $type -}}{{ $type = "float64" -}}{{ end -}}
-{{ if eq "string" $type -}}
-	flag.{{ ToCamel $type }}Var(&{{ ToLowerCamel $flag.Name }}, "{{ $flag.Name }}", "{{ $flag.Value.Get }}", "usage of {{ $flag.Name }}")
-{{ else -}}
-	flag.{{ ToCamel $type }}Var(&{{ ToLowerCamel $flag.Name }}, "{{ $flag.Name }}", {{ $flag.Value.Get }}, "usage of {{ $flag.Name }}")
-{{ end -}}
-{{ end }}}
-`
+	return t.tmpl.Execute(outStream, map[string]interface{}{
+		"Flags": fs.flags(),
+		"Args":  fs.args(),
+	})
 }
 
 func templateFrom(loc string) (*template.Template, error) {

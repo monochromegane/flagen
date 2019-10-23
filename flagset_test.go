@@ -21,7 +21,7 @@ func TestToValue(t *testing.T) {
 }
 
 func TestFlagSet(t *testing.T) {
-	flagSet := newFlagSet()
+	flagSet := newOrderedFlagSet()
 
 	idx := []int64{0, 1, 2, 3, 4}
 	names := []string{"a", "b", "c", "b", "a"}
@@ -52,13 +52,13 @@ func TestFlagSetParse(t *testing.T) {
 		[]string{"-i", "1", "-f", "1.0", "-s", "abc", "-b1", "-b2=true", "arg1", "arg2"},
 		[]string{"--i", "1", "--f", "1.0", "--s", "abc", "--b1", "--b2=true", "arg1", "arg2"},
 	} {
-		flagSet := &FlagSet{}
-		err := flagSet.Parse(arguments)
+		flagSet := &flagSet{}
+		err := flagSet.parse(arguments)
 		if err != nil {
 			t.Errorf("flagSet.Parse should not return err, but %v\n", err)
 		}
 
-		flags := flagSet.Flags()
+		flags := flagSet.flags()
 		if len(flags) != 5 {
 			t.Errorf("flagSet.Parse should not return 5 flags, but %d\n", len(flags))
 		}
@@ -79,7 +79,7 @@ func TestFlagSetParse(t *testing.T) {
 			t.Errorf("flagSet.Parse should not return flag of bool\n")
 		}
 
-		args := flagSet.Args()
+		args := flagSet.args()
 		if len(args) != 2 {
 			t.Errorf("flagSet.Parse should not return 2 args, but %d\n", len(args))
 		}
@@ -98,8 +98,8 @@ func TestFlagSetParseBadSyntax(t *testing.T) {
 		[]string{"---", "1"},
 		[]string{"--=", "1"},
 	} {
-		flagSet := &FlagSet{}
-		err := flagSet.Parse(arguments)
+		flagSet := &flagSet{}
+		err := flagSet.parse(arguments)
 
 		if err == nil {
 			t.Errorf("flagSet.Parse should return error\n")
@@ -112,18 +112,18 @@ func TestFlagSetParseTerminate(t *testing.T) {
 		[]string{"-i", "1", "-", "-f", "1.0", "arg1"},
 		[]string{"-i", "1", "--", "-f", "1.0", "arg1"},
 	} {
-		flagSet := &FlagSet{}
-		err := flagSet.Parse(arguments)
+		flagSet := &flagSet{}
+		err := flagSet.parse(arguments)
 		if err != nil {
 			t.Errorf("flagSet.Parse should not return err, but %v\n", err)
 		}
 
-		flags := flagSet.Flags()
+		flags := flagSet.flags()
 		if len(flags) != 1 {
 			t.Errorf("flagSet.Parse should not return 5 flags, but %d\n", len(flags))
 		}
 
-		args := flagSet.Args()
+		args := flagSet.args()
 		if len(args) != 4-i {
 			t.Errorf("flagSet.Parse should return %d args, but %d\n", 4-i, len(args))
 		}

@@ -5,41 +5,14 @@ import (
 	"fmt"
 )
 
-type FlagSet struct {
-	args    []string
-	flagSet *flagSet
+type flagSet struct {
+	argList []string
+	flagSet *orderedFlagSet
 }
 
-func (fs *FlagSet) Parse(args []string) error {
-	fs.args = args
-	return fs.parse()
-}
-
-func (fs *FlagSet) Arg(i int) string {
-	if len(fs.args) <= i {
-		return ""
-	}
-	return fs.args[i]
-}
-
-func (fs *FlagSet) Args() []string {
-	return fs.args
-}
-
-func (fs *FlagSet) Flag(i int) Flag {
-	flags := fs.Flags()
-	if len(flags) <= i {
-		return Flag{}
-	}
-	return flags[i]
-}
-
-func (fs *FlagSet) Flags() []Flag {
-	return fs.flagSet.toList()
-}
-
-func (fs *FlagSet) parse() error {
-	fs.flagSet = newFlagSet()
+func (fs *flagSet) parse(args []string) error {
+	fs.argList = args
+	fs.flagSet = newOrderedFlagSet()
 	for {
 		seen, err := fs.parseOne()
 		if seen {
@@ -49,11 +22,34 @@ func (fs *FlagSet) parse() error {
 	}
 }
 
-func (fs *FlagSet) parseOne() (bool, error) {
-	if len(fs.args) == 0 {
+func (fs *flagSet) arg(i int) string {
+	if len(fs.argList) <= i {
+		return ""
+	}
+	return fs.argList[i]
+}
+
+func (fs *flagSet) args() []string {
+	return fs.argList
+}
+
+func (fs *flagSet) flag(i int) Flag {
+	flags := fs.flags()
+	if len(flags) <= i {
+		return Flag{}
+	}
+	return flags[i]
+}
+
+func (fs *flagSet) flags() []Flag {
+	return fs.flagSet.toList()
+}
+
+func (fs *flagSet) parseOne() (bool, error) {
+	if len(fs.argList) == 0 {
 		return false, nil
 	}
-	s := fs.args[0]
+	s := fs.argList[0]
 	if len(s) < 2 || s[0] != '-' {
 		return false, nil
 	}
@@ -62,7 +58,7 @@ func (fs *FlagSet) parseOne() (bool, error) {
 	if s[1] == '-' {
 		numMinuses++
 		if len(s) == 2 {
-			fs.args = fs.args[1:]
+			fs.argList = fs.argList[1:]
 			return false, nil
 		}
 	}
@@ -71,7 +67,7 @@ func (fs *FlagSet) parseOne() (bool, error) {
 		return false, fmt.Errorf("bad flag syntax: %s", s)
 	}
 
-	fs.args = fs.args[1:]
+	fs.argList = fs.argList[1:]
 	hasValue := false
 	value := ""
 	for i := 1; i < len(name); i++ {
@@ -83,10 +79,10 @@ func (fs *FlagSet) parseOne() (bool, error) {
 		}
 	}
 
-	if !hasValue && len(fs.args) > 0 {
-		if fs.args[0][0] != '-' {
+	if !hasValue && len(fs.argList) > 0 {
+		if fs.argList[0][0] != '-' {
 			hasValue = true
-			value, fs.args = fs.args[0], fs.args[1:]
+			value, fs.argList = fs.argList[0], fs.argList[1:]
 		}
 	}
 
@@ -113,22 +109,22 @@ func toValue(val string) value {
 	return v
 }
 
-func newFlagSet() *flagSet {
-	return &flagSet{flags: list.New()}
+func newOrderedFlagSet() *orderedFlagSet {
+	return &orderedFlagSet{flags: list.New()}
 }
 
-type flagSet struct {
+type orderedFlagSet struct {
 	flags *list.List
 }
 
-func (fs *flagSet) set(name string, value value) {
+func (fs *orderedFlagSet) set(name string, value value) {
 	if e := fs.lookup(name); e != nil {
 		fs.flags.Remove(e)
 	}
 	fs.flags.PushBack(Flag{Name: name, Value: value})
 }
 
-func (fs *flagSet) lookup(name string) *list.Element {
+func (fs *orderedFlagSet) lookup(name string) *list.Element {
 	for e := fs.flags.Front(); e != nil; e = e.Next() {
 		if f, ok := e.Value.(Flag); ok && f.Name == name {
 			return e
@@ -137,7 +133,7 @@ func (fs *flagSet) lookup(name string) *list.Element {
 	return nil
 }
 
-func (fs *flagSet) toList() []Flag {
+func (fs *orderedFlagSet) toList() []Flag {
 	flags := make([]Flag, fs.flags.Len())
 	var i int
 	for e := fs.flags.Front(); e != nil; e = e.Next() {
