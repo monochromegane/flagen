@@ -25,3 +25,21 @@ func ExampleTemplate_Execute_Go() {
 	// 	flag.BoolVar(&b2, "b2", true, "usage of b2")
 	// }
 }
+
+func ExampleTemplate_Execute_Python() {
+	tmpl, _ := NewTemplate("py")
+
+	args := []string{"-i", "1", "-f", "1.1", "-s", "abc", "-b1", "-b2=true", "arg1", "arg2"}
+	tmpl.Execute(os.Stdout, args)
+
+	// Output:
+	// import argparse
+	// parser = argparse.ArgumentParser()
+	// parser.add_argument("-i", type=int, default=1, help="Help of i")
+	// parser.add_argument("-f", type=float, default=1.1, help="Help of f")
+	// parser.add_argument("-s", default="abc", help="Help of s")
+	// parser.add_argument("--b1", action="store_false", help="Help of b1")
+	// parser.add_argument("--b2", action="store_true", help="Help of b2")
+	// parser.add_argument("arg1", help="Help of arg1")
+	// parser.add_argument("arg2", help="Help of arg2")
+}
