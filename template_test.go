@@ -43,3 +43,56 @@ func ExampleTemplate_Execute_Python() {
 	// parser.add_argument("arg1", help="Help of arg1")
 	// parser.add_argument("arg2", help="Help of arg2")
 }
+
+func ExampleTemplate_Execute_Ruby() {
+	tmpl, _ := NewTemplate("rb")
+
+	args := []string{"-i", "1", "-f", "1.1", "-s", "abc", "-b1", "-b2=true", "arg1", "arg2"}
+	tmpl.Execute(os.Stdout, args)
+
+	// Output:
+	// require 'optparse'
+	//
+	// opts = {
+	//   i: 1,
+	//   f: 1.1,
+	//   s: 'abc',
+	//   b_1: false,
+	//   b_2: true,
+	// }
+	//
+	// OptionParser.new do |op|
+	//   op.on('-i [VALUE]', 'Desc of i') {|v| opts[:i] = v.to_i }
+	//   op.on('-f [VALUE]', 'Desc of f') {|v| opts[:f] = v.to_f }
+	//   op.on('-s [VALUE]', 'Desc of s') {|v| opts[:s] = v }
+	//   op.on('--b1', 'Desc of b1') {|v| opts[:b_1] = v }
+	//   op.on('--b2', 'Desc of b2') {|v| opts[:b_2] = v }
+	//
+	//   op.parse!(ARGV)
+	// end
+}
+
+func ExampleTemplate_Execute_Shell() {
+	tmpl, _ := NewTemplate("sh")
+
+	args := []string{"-i", "1", "-s", "abc", "-b", "-c=true", "arg1", "arg2"}
+	tmpl.Execute(os.Stdout, args)
+
+	// Output:
+	// I="1"
+	// S="abc"
+	// B="FALSE"
+	// C="TRUE"
+	//
+	// while getopts i:s:bc OPT
+	// do
+	//   case $OPT in
+	//     "i" ) I="$OPTARG";;
+	//     "s" ) S="$OPTARG";;
+	//     "b" ) B="TRUE";;
+	//     "c" ) C="FALSE";;
+	//   esac
+	// done
+	//
+	// shift `expr $OPTIND - 1`
+}
