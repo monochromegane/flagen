@@ -2,12 +2,10 @@ package flagen
 
 import "os"
 
-func ExampleTemplate_Execute_Go() {
+func ExampleTemplate_Execute_go() {
 	tmpl, _ := NewTemplate("go")
-
 	args := []string{"-i", "1", "-f", "1.1", "-s", "abc", "-b1", "-b2=true", "arg1", "arg2"}
 	tmpl.Execute(os.Stdout, args)
-
 	// Output:
 	// var (
 	// 	i	int
@@ -26,12 +24,10 @@ func ExampleTemplate_Execute_Go() {
 	// }
 }
 
-func ExampleTemplate_Execute_Python() {
+func ExampleTemplate_Execute_python() {
 	tmpl, _ := NewTemplate("py")
-
 	args := []string{"-i", "1", "-f", "1.1", "-s", "abc", "-b1", "-b2=true", "arg1", "arg2"}
 	tmpl.Execute(os.Stdout, args)
-
 	// Output:
 	// import argparse
 	// parser = argparse.ArgumentParser()
@@ -45,12 +41,10 @@ func ExampleTemplate_Execute_Python() {
 	// args = parser.parse_args()
 }
 
-func ExampleTemplate_Execute_Ruby() {
+func ExampleTemplate_Execute_ruby() {
 	tmpl, _ := NewTemplate("rb")
-
 	args := []string{"-i", "1", "-f", "1.1", "-s", "abc", "-b1", "-b2=true", "arg1", "arg2"}
 	tmpl.Execute(os.Stdout, args)
-
 	// Output:
 	// require 'optparse'
 	//
@@ -73,12 +67,10 @@ func ExampleTemplate_Execute_Ruby() {
 	// end
 }
 
-func ExampleTemplate_Execute_Shell() {
+func ExampleTemplate_Execute_shell() {
 	tmpl, _ := NewTemplate("sh")
-
 	args := []string{"-i", "1", "-s", "abc", "-b", "-c=true", "arg1", "arg2"}
 	tmpl.Execute(os.Stdout, args)
-
 	// Output:
 	// I="1"
 	// S="abc"
