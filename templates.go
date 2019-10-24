@@ -69,6 +69,7 @@ parser.add_argument("{{ $prefix }}{{ $flag.Name }}"{{ with $type }}, type={{.}}{
 {{ range $arg := .Args -}}
 parser.add_argument("{{ $arg }}", help="Help of {{ $arg }}")
 {{ end -}}
+args = parser.parse_args()
 `
 }
 

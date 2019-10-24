@@ -42,6 +42,7 @@ func ExampleTemplate_Execute_Python() {
 	// parser.add_argument("--b2", action="store_true", help="Help of b2")
 	// parser.add_argument("arg1", help="Help of arg1")
 	// parser.add_argument("arg2", help="Help of arg2")
+	// args = parser.parse_args()
 }
 
 func ExampleTemplate_Execute_Ruby() {
