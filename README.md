@@ -51,13 +51,16 @@ It provided from [iancoleman/strcase](https://github.com/iancoleman/strcase).
 
 ### Vim
 
-In your source which is opened Vim, you can insert the boilerplate.
+In your source which is being opened by Vim, you can insert the boilerplate.
 
 ```
 :r!flagen YOUR_TEMPLATE YOUR_COMMAND_LINE_OPTIONS...
 ```
 
 ### Your boilerplate tool
+
+Flagen provides generator as library.
+You can use it in your boilerplate tool in Go as the following,
 
 ```go
 	tmpl, err := flagen.NewTemplate(args[0])
