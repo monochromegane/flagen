@@ -28,6 +28,8 @@ func init() {
 }
 ```
 
+See also [other examples for Python, Ruby and Shell](https://godoc.org/github.com/monochromegane/flagen#pkg-examples).
+
 ## Templates
 
 Flagen has preset templates for {go,py,rb,sh}.
