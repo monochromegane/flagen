@@ -1,3 +1,4 @@
+// Package flagen provides a command line option parser generator using command line option.
 package flagen
 
 import (
@@ -6,6 +7,7 @@ import (
 	"io"
 )
 
+// Run runs the flagen.
 func Run(args []string, outStream, errStream io.Writer) error {
 	fs := flag.NewFlagSet("flagen", flag.ContinueOnError)
 	fs.SetOutput(errStream)

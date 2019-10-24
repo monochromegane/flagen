@@ -6,6 +6,7 @@ import (
 	"github.com/iancoleman/strcase"
 )
 
+// TemplateFuncMap has template functions for converting string case.
 var TemplateFuncMap template.FuncMap = template.FuncMap{
 	"ToSnake":              strcase.ToSnake,
 	"ToScreamingSnake":     strcase.ToScreamingSnake,

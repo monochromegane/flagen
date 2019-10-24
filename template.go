@@ -6,6 +6,7 @@ import (
 	"text/template"
 )
 
+// NewTemplate creates a new Template.
 func NewTemplate(path string) (*Template, error) {
 	tmpl, err := templateFrom(path)
 	if err != nil {
@@ -14,10 +15,12 @@ func NewTemplate(path string) (*Template, error) {
 	return &Template{tmpl: tmpl}, nil
 }
 
+// Template is the representation of a parsed template.
 type Template struct {
 	tmpl *template.Template
 }
 
+// Execute applies a parsed template to the specified arguments, and writes the output to outStream.
 func (t *Template) Execute(outStream io.Writer, args []string) error {
 	fs := &flagSet{}
 	if err := fs.parse(args); err != nil {
@@ -31,7 +34,7 @@ func (t *Template) Execute(outStream io.Writer, args []string) error {
 }
 
 func templateFrom(loc string) (*template.Template, error) {
-	if tmpl, err := TemplateFromFile(loc); err == nil {
+	if tmpl, err := templateFromFile(loc); err == nil {
 		return tmpl, nil
 	} else if tmpl, err := templateFromPreset(loc); err != nil {
 		return nil, err
@@ -40,7 +43,7 @@ func templateFrom(loc string) (*template.Template, error) {
 	}
 }
 
-func TemplateFromFile(path string) (*template.Template, error) {
+func templateFromFile(path string) (*template.Template, error) {
 	tmpl := template.New(path)
 	tmpl = tmpl.Funcs(TemplateFuncMap)
 	return tmpl.ParseFiles(path)
