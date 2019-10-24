@@ -1,4 +1,4 @@
-# flagen
+# flagen [![Build Status](https://travis-ci.org/monochromegane/flagen.svg?branch=master)](https://travis-ci.org/monochromegane/flagen) [![GoDoc](https://godoc.org/github.com/monochromegane/flagen?status.svg)](https://godoc.org/github.com/monochromegane/flagen)
 
 A command line option parser generator using command line option.
 It generates a useful boilerplate of option parser for various programing languages using the format of command line options that will be used.
